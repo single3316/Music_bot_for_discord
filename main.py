@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from config import TOKEN
-from asyncio import sleep
+
 import youtube_dl
 import os
 
@@ -15,7 +15,7 @@ async def on_ready():
 
 server, server_id, name_channel = None, None, None
 
-domains = ['https://www.youtube.com/', 'http://www.youtube.com/', 'https://www.youtu.be/']
+domains = ['https://www.youtube.com/', 'http://www.youtube.com/', 'https://www.youtu.be/', 'http://www.youtu.be/']
 
 
 async def check_domains(link):
@@ -25,35 +25,76 @@ async def check_domains(link):
         return False
 
 
-YDL_OPTIONS = {'format': 'bestaudio', 'noplaylist':'False'}
-FFMPEG_OPTIONS = {'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5', 'options': '-vn'}
-
-
 @bot.command()
-async def play(ctx, arg):
-    global vc
-
-    try:
-        voice_channel = ctx.message.author.voice.channel
-        vc = await voice_channel.connect()
-    except:
-        print('Уже подключен или не удалось подключиться')
-
-    if vc.is_playing():
-        await ctx.send(f'{ctx.message.author.mention}, музыка уже проигрывается.')
-
+async def play(ctx, *, command=None):
+    global server, server_id, name_channel
+    author = ctx.author
+    if command == None:
+        server = ctx.guild
+        name_channel = author.voice.channel.name
+        voice_channel = discord.utils.get(server.voice_channels, name=name_channel)
+    params = command.split(' ')
+    if len(params) == 1:
+        sourse = params[0]
+        server = ctx.guild
+        name_channel = author.voice.channel.name
+        voice_channel = discord.utils.get(server.voice_channels, name=name_channel)
+        print('param 1')
+    elif len(params) == 3:
+        server_id = params[0]
+        voice_id = params[1]
+        sourse = params[2]
+        try:
+            server_id = int(server_id)
+            voice_id = int(voice_id)
+        except:
+            await ctx.chanell.sen(f'{author.mention}, id the server or voice must be an integer!')
+            return
+        print('param 3')
+        server = bot.get_guild(server_id)
+        voice_channel = discord.utils.get(server.voice_channels, id=voice_id)
     else:
-        with YoutubeDL(YDL_OPTIONS) as ydl:
-            info = ydl.extract_info(arg, download=False)
+        await ctx.channel.send(f'{author.mention}, command is not correct')
+        return
 
-        URL = info['formats'][0]['url']
+    voice = discord.utils.get(bot.voice_clients, guild=server)
+    if voice is None:
+        await voice_channel.connect()
+        voice = discord.utils.get(bot.voice_clients, guild=server)
 
-        vc.play(discord.FFmpegPCMAudio(executable="ffmpeg\\ffmpeg.exe", source = URL, **FFMPEG_OPTIONS))
-                
-        while vc.is_playing():
-            await sleep(1)
-        if not vc.is_paused():
-            await vc.disconnect()
+    if sourse == None:
+        pass
+    elif sourse.startswith('http'):
+        if not check_domains(sourse):
+            await ctx.channel.send(f'{author.mention}, link is not allowed')
+            return
+        song_there = os.path.isfile('music/song.mp3')
+        try:
+            if song_there:
+                os.remove('music/song.mp3')
+        except PermissionError:
+            await ctx.channel.send('Not enough rights to delete file!')
+            return
+
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'postprocessor': [
+                {
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '192',
+                }
+            ],
+        }
+
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([sourse])
+        for file in os.listdir('music/'):
+            if file.endswith('.mp3'):
+                os.rename(file, 'music/song.mp3')
+            voice.play(discord.FFmpegPCMAudio('music/song.mp3'))
+        else:
+            voice.play(discord.FFmpegPCMAudio(f'music/{sourse}'))
 
 
 bot.run(TOKEN)
