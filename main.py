@@ -15,7 +15,7 @@ async def on_ready():
 
 server, server_id, name_channel = None, None, None
 
-domains = ['https://www.youtube.com/', 'http://www.youtube.com/', 'https://www.youtu.be/', 'http://www.youtu.be/']
+domains = ['https://www.youtube.com/', 'http://www.youtube.com/', 'https://www.youtu.be/']
 
 
 async def check_domains(link):
