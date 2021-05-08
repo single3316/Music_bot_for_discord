@@ -5,7 +5,7 @@ from config import TOKEN
 import youtube_dl
 import os
 
-bot = commands.Bot(command_prefix='!')
+bot = commands.Bot(command_prefix='#')
 
 
 @bot.event
@@ -16,6 +16,8 @@ async def on_ready():
 server, server_id, name_channel = None, None, None
 
 domains = ['https://www.youtube.com/', 'http://www.youtube.com/', 'https://www.youtu.be/', 'http://www.youtu.be/']
+
+
 async def check_domains(link):
     for x in domains:
         if link.startwith(x):
@@ -33,7 +35,7 @@ async def play(ctx, *, command=None):
         voice_channel = discord.utils.get(server.voice_channels, name=name_channel)
     params = command.split(' ')
     if len(params) == 1:
-        file_name = params[0]
+        sourse = params[0]
         server = ctx.guild
         name_channel = author.voice.channel.name
         voice_channel = discord.utils.get(server.voice_channels, name=name_channel)
@@ -41,7 +43,7 @@ async def play(ctx, *, command=None):
     elif len(params) == 3:
         server_id = params[0]
         voice_id = params[1]
-        file_name = params[2]
+        sourse = params[2]
         try:
             server_id = int(server_id)
             voice_id = int(voice_id)
@@ -60,12 +62,39 @@ async def play(ctx, *, command=None):
         await voice_channel.connect()
         voice = discord.utils.get(bot.voice_clients, guild=server)
 
-    if sourse == None
+    if sourse == None:
         pass
-    elif sourse.startwith('http'):
+    elif sourse.startswith('http'):
         if not check_domains(sourse):
             await ctx.channel.send(f'{author.mention}, link is not allowed')
+            return
+        song_there = os.path.isfile('music/song.mp3')
+        try:
+            if song_there:
+                os.remove('music/song.mp3')
+        except PermissionError:
+            await ctx.channel.send('Not enough rights to delete file!')
+            return
 
+        ydl_opts = {
+            'format': 'bestaudio/best',
+            'postprocessor': [
+                {
+                    'key': 'FFmpegExtractAudio',
+                    'preferredcodec': 'mp3',
+                    'preferredquality': '192',
+                }
+            ],
+        }
+
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            ydl.download([sourse])
+        for file in os.listdir('music/'):
+            if file.endswith('.mp3'):
+                os.rename(file, 'music/song.mp3')
+            voice.play(discord.FFmpegPCMAudio('music/song.mp3'))
+        else:
+            voice.play(discord.FFmpegPCMAudio(f'music/{sourse}'))
 
 
 bot.run(TOKEN)
