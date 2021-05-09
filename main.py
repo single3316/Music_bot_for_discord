@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 from config import TOKEN
-
+import ffmpeg
 import youtube_dl
 import os
 
@@ -77,24 +77,18 @@ async def play(ctx, *, command=None):
             return
 
         ydl_opts = {
+            'outtmpl': "music/song.mp3",
             'format': 'bestaudio/best',
-            'postprocessors': [
-                {
-                    'key': 'FFmpegExtractAudio',
-                    'preferredcodec': 'mp3',
-                    'preferredquality': '192',
-                }
-            ],
+            'noplaylist': True,
+            'postprocessors': [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192', }]
         }
 
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([sourse])
-        for file in os.listdir('music/'):
-            if file.endswith('.mp3'):
-                os.rename(file, 'music/song.mp3')
-            voice.play(discord.FFmpegPCMAudio('music/song.mp3'))
-        else:
-            voice.play(discord.FFmpegPCMAudio(f'music/{sourse}'))
+            voice.play(discord.FFmpegPCMAudio(executable='ffmpeg.exe', source='music/song.mp3'))
 
 
 bot.run(TOKEN)
