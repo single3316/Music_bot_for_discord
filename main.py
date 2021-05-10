@@ -10,7 +10,7 @@ bot = commands.Bot(command_prefix='#')
 
 @bot.event
 async def on_ready():
-    print('Bot in place!')
+    print('Bot is working!')
 
 
 server, server_id, name_channel = None, None, None
@@ -29,28 +29,27 @@ async def check_domains(link):
 async def play(ctx, *, command=None):
     global server, server_id, name_channel
     author = ctx.author
-    if command == None:
+    if command is None:
         server = ctx.guild
         name_channel = author.voice.channel.name
         voice_channel = discord.utils.get(server.voice_channels, name=name_channel)
     params = command.split(' ')
     if len(params) == 1:
-        sourse = params[0]
+        source = params[0]
         server = ctx.guild
         name_channel = author.voice.channel.name
         voice_channel = discord.utils.get(server.voice_channels, name=name_channel)
-        print('param 1')
     elif len(params) == 3:
         server_id = params[0]
         voice_id = params[1]
-        sourse = params[2]
+        source = params[2]
         try:
             server_id = int(server_id)
             voice_id = int(voice_id)
-        except:
+        except Exception as e:
             await ctx.chanell.sen(f'{author.mention}, id the server or voice must be an integer!')
+            print(e)
             return
-        print('param 3')
         server = bot.get_guild(server_id)
         voice_channel = discord.utils.get(server.voice_channels, id=voice_id)
     else:
@@ -62,10 +61,10 @@ async def play(ctx, *, command=None):
         await voice_channel.connect()
         voice = discord.utils.get(bot.voice_clients, guild=server)
 
-    if sourse == None:
+    if source is None:
         pass
-    elif sourse.startswith('http'):
-        if not check_domains(sourse):
+    elif source.startswith('http'):
+        if not check_domains(source):
             await ctx.channel.send(f'{author.mention}, link is not allowed')
             return
         song_there = os.path.isfile('music/song.mp3')
@@ -87,7 +86,7 @@ async def play(ctx, *, command=None):
         }
 
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
-            ydl.download([sourse])
+            ydl.download([source])
             voice.play(discord.FFmpegPCMAudio(executable='ffmpeg.exe', source='music/song.mp3'))
 
 
