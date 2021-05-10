@@ -69,8 +69,10 @@ async def play(ctx, *, command=None):
             return
         song_there = os.path.isfile('music/song.mp3')
         try:
-            if song_there:
+            if song_there and voice is None:
                 os.remove('music/song.mp3')
+            elif not (voice is None):
+                await ctx.channel.send(f'{author.mention}, wait then bot stop.')
         except PermissionError:
             await ctx.channel.send('Not enough rights to delete file!')
             return
