@@ -2,17 +2,24 @@ import sqlite3
 
 
 class Sql:
-    def __init__(self, author_id, conn):
+    def __init__(self, author_id, conn, name):
+        self.author_name = name
         self.author = author_id
         self.conn = conn
         self.new = self.check_user()
+        if self.new:
+            self.add_user()
 
     def check_user(self):
         cursor = self.conn.cursor()
-        user = cursor.execute('SELECT * FROM users WHERE id = ?', (int(self.author), )).fetchone()
+        user = cursor.execute('SELECT * FROM users WHERE id = ?', (int(self.author),)).fetchone()
         if user is None:
-            print('Lol')
             return True
         else:
-            print('LOL')
             return False
+
+    def add_user(self):
+        user = [int(self.author), self.author_name, 0, 0]
+        cursor = self.conn.cursor()
+        cursor.execute('INSERT INTO users(id, name, score, level) VALUES(?, ?, ?, ?)', user)
+        self.conn.commit()
