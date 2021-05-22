@@ -4,8 +4,15 @@ from config import TOKEN
 import ffmpeg
 import youtube_dl
 import os
+from sql import Sql
+import sqlite3
 
 bot = commands.Bot(command_prefix='#')
+
+
+def get_connection():
+    con = sqlite3.connect('db.sqlite')
+    return con
 
 
 @bot.event
@@ -90,11 +97,12 @@ async def play(ctx, *, command=None):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             ydl.download([source])
             voice.play(discord.FFmpegPCMAudio(executable='ffmpeg.exe', source='music/song.mp3'))
+            await ctx.channel.send(f'```Now playing song:```')
 
 
 @bot.event
-async def on_message():
-    pass
+async def on_message(message):
 
+    await bot.process_commands(message)
 
 bot.run(TOKEN)
