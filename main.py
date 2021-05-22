@@ -92,4 +92,9 @@ async def play(ctx, *, command=None):
             voice.play(discord.FFmpegPCMAudio(executable='ffmpeg.exe', source='music/song.mp3'))
 
 
+@bot.event
+async def on_message():
+    pass
+
+
 bot.run(TOKEN)
