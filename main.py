@@ -102,7 +102,7 @@ async def play(ctx, *, command=None):
 
 @bot.event
 async def on_message(message):
-
+    user_sql = Sql(author_id=message.author.id, conn=get_connection())
     await bot.process_commands(message)
 
 bot.run(TOKEN)
