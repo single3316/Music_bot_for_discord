@@ -23,3 +23,15 @@ class Sql:
         cursor = self.conn.cursor()
         cursor.execute('INSERT INTO users(id, name, score, level) VALUES(?, ?, ?, ?)', user)
         self.conn.commit()
+
+    def add_point(self, point):
+        cursor = self.conn.cursor()
+        score = cursor.execute('SELECT score FROM users WHERE id = ?', (int(self.author),)).fetchone()[0]
+        level = cursor.execute('SELECT level FROM users WHERE id = ?', (int(self.author),)).fetchone()[0]
+        score += point
+        if score >= 1000:
+            level += 1
+            cursor.execute('UPDATE users SET score = 0 level = ? where id = ?', (level, int(self.author), ))
+        else:
+            cursor.execute('UPDATE users SET score = ? where id = ?', (score, int(self.author), ))
+        self.conn.commit()

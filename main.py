@@ -8,6 +8,7 @@ from sql import Sql
 import sqlite3
 
 bot = commands.Bot(command_prefix='#')
+MAX_SCORE = 1000
 
 
 def get_connection():
@@ -103,6 +104,8 @@ async def play(ctx, *, command=None):
 @bot.event
 async def on_message(message):
     user_sql = Sql(author_id=message.author.id, conn=get_connection(), name=message.author.name)
+    user_sql.add_point(len(message.content))
     await bot.process_commands(message)
+
 
 bot.run(TOKEN)
