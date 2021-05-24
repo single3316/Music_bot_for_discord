@@ -6,6 +6,7 @@ import youtube_dl
 import os
 from sql import Sql
 import sqlite3
+from webhook import create_webhook
 
 bot = commands.Bot(command_prefix='#')
 MAX_SCORE = 1000
@@ -105,7 +106,15 @@ async def play(ctx, *, command=None):
 async def on_message(message):
     user_sql = Sql(author_id=message.author.id, conn=get_connection(), name=message.author.name)
     user_sql.add_point(len(message.content))
+    if message.author == '576307747566387223':
+        await message.channel.send('Сева даун')
     await bot.process_commands(message)
+
+
+@bot.command()
+async def level(ctx):
+    user = Sql(ctx.author.id, get_connection(), ctx.author.name)
+    create_webhook(user.get_name(), user.get_level())
 
 
 bot.run(TOKEN)
