@@ -35,3 +35,18 @@ class Sql:
         else:
             cursor.execute('UPDATE users SET score = ? where id = ?', (score, int(self.author), ))
         self.conn.commit()
+
+    def get_name(self):
+        cursor = self.conn.cursor()
+        user = cursor.execute('SELECT name FROM users WHERE id = ?', (int(self.author),)).fetchone()[0]
+        return user
+
+    def get_score(self):
+        cursor = self.conn.cursor()
+        user = cursor.execute('SELECT score FROM users WHERE id = ?', (int(self.author),)).fetchone()[0]
+        return user
+
+    def get_level(self):
+        cursor = self.conn.cursor()
+        user = cursor.execute('SELECT level FROM users WHERE id = ?', (int(self.author),)).fetchone()[0]
+        return user
