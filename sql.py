@@ -31,7 +31,7 @@ class Sql:
         score += point
         if score >= 1000:
             level += 1
-            cursor.execute('UPDATE users SET score = 0 level = ? where id = ?', (level, int(self.author), ))
+            cursor.execute('UPDATE users SET score = 0, level = ? where id = ?', (level, int(self.author), ))
         else:
             cursor.execute('UPDATE users SET score = ? where id = ?', (score, int(self.author), ))
         self.conn.commit()
