@@ -4,7 +4,7 @@ from PIL import Image, ImageFont, ImageDraw
 import requests
 
 
-def create_card(url, rank, score, level, name):
+def create_personal_card(url, rank, score, level, name):
     try:
         resp = requests.get(url, stream=True).raw
     except requests.exceptions.RequestException:
