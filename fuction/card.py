@@ -1,0 +1,35 @@
+import numpy as np
+from PIL import Image, ImageDraw
+from PIL import Image, ImageFont, ImageDraw
+import requests
+
+
+def create_card(url, rank, score):
+    try:
+        resp = requests.get(url, stream=True).raw
+    except requests.exceptions.RequestException:
+        print('Error')
+    try:
+        img = Image.open(resp)
+    except IOError:
+        print("Unable to open image")
+    img.save('images/w.png', 'png')
+    img = Image.open("images/w.png").convert("RGB")
+    npImage = np.array(img)
+    h, w = img.size
+    alpha = Image.new('L', img.size, 0)
+    draw = ImageDraw.Draw(alpha)
+    draw.pieslice([0, 0, h, w], 0, 360, fill=255)
+    npAlpha = np.array(alpha)
+    npImage = np.dstack((npImage, npAlpha))
+    Image.fromarray(npImage).save('images/w.png')
+    phon = Image.open('images/phon.png')
+    av = Image.open('images/w.png')
+    phon.paste(av, (50, 75), av)
+    phon.save('images/w.png', 'png')
+    im = Image.open('images/w.png')
+    draw_rank = ImageDraw.Draw(im)
+    font = ImageFont.truetype('Main_math.otf', size=40)
+    draw_rank.text((340, 50), f'Rating: {rank}', fill=('#00a8f0'), font=font)
+    draw_rank.text((340, 100), f'Score: {score}', fill=('#00a8f0'), font=font)
+    im.save('images/w.png','png')
