@@ -4,7 +4,7 @@ from PIL import Image, ImageFont, ImageDraw
 import requests
 
 
-def create_card(url, rank, score):
+def create_card(url, rank, score, level, name):
     try:
         resp = requests.get(url, stream=True).raw
     except requests.exceptions.RequestException:
@@ -29,7 +29,10 @@ def create_card(url, rank, score):
     phon.save('images/w.png', 'png')
     im = Image.open('images/w.png')
     draw_rank = ImageDraw.Draw(im)
-    font = ImageFont.truetype('Main_math.otf', size=40)
-    draw_rank.text((340, 50), f'Rating: {rank}', fill=('#00a8f0'), font=font)
-    draw_rank.text((340, 100), f'Score: {score}', fill=('#00a8f0'), font=font)
+    font = ImageFont.truetype('font/main.otf', size=40)
+    name_font = ImageFont.truetype('font/main.otf', size=50)
+    draw_rank.text((340, 60), name, fill=('#00a8f0'), font=name_font)
+    draw_rank.text((350, 160), f'Rating: {rank}', fill=('#00a8f0'), font=font)
+    draw_rank.text((350, 260), f'Score: {score}/1000', fill=('#00a8f0'), font=font)
+    draw_rank.text((350, 210), f'Level: {level}', fill=('#00a8f0'), font=font)
     im.save('images/w.png','png')

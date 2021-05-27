@@ -119,7 +119,7 @@ async def level(ctx):
     member = ctx.author
     id = ctx.author.id
     image_av = member.avatar_url_as(format='png', size=256)
-    create_card(image_av, rank, score)
+    create_card(image_av, rank, score, user.get_level(),ctx.author.name,)
     await ctx.channel.send(file=discord.File('images/w.png'))
 
 
