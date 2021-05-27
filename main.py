@@ -1,12 +1,11 @@
 import discord
 from discord.ext import commands
 from config import TOKEN
-import ffmpeg
 import youtube_dl
 import os
-from sql import Sql
+from fuction.sql import Sql
 import sqlite3
-from webhook import send_webhook
+from fuction.webhook import send_webhook
 
 bot = commands.Bot(command_prefix='#')
 
