@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from config import TOKEN
+from config import TOKEN, WEBHOOK_URL
 import youtube_dl
 import os
 from fuction.sql import Sql
@@ -127,7 +127,7 @@ async def level(ctx):
 async def on_member_join(member):
     send_webhook(f'Добро пожаловать {member.mention}',
                  'Рады вас приветствовать на нашем сервере для игр и IT индустрии',
-                 'https://discord.com/api/webhooks/839621007614672896/2e1_mmYOTtKKF0uyN42q_eeg9BCyz8tS521jCXBuUqiODM9SfwEzVFQLB85EAExUIuSd')
+                 WEBHOOK_URL)
 
 
 bot.run(TOKEN)
