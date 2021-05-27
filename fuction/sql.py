@@ -31,9 +31,9 @@ class Sql:
         score += point
         if score >= 1000:
             level += 1
-            cursor.execute('UPDATE users SET score = 0, level = ? where id = ?', (level, int(self.author), ))
+            cursor.execute('UPDATE users SET score = 0, level = ? where id = ?', (level, int(self.author),))
         else:
-            cursor.execute('UPDATE users SET score = ? where id = ?', (score, int(self.author), ))
+            cursor.execute('UPDATE users SET score = ? where id = ?', (score, int(self.author),))
         self.conn.commit()
 
     def get_name(self):
@@ -50,3 +50,13 @@ class Sql:
         cursor = self.conn.cursor()
         user = cursor.execute('SELECT level FROM users WHERE id = ?', (int(self.author),)).fetchone()[0]
         return user
+
+    def get_rank(self):
+        cursor = self.conn.cursor()
+        user_list = cursor.execute('SELECT name FROM users ORDER BY level DESC').fetchall()
+        rank = 1
+        for i in user_list:
+            if self.author_name == i[0]:
+                return rank
+            rank += 1
+        return None
