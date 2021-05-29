@@ -6,7 +6,7 @@ import os
 from fuction.sql import Sql
 import sqlite3
 from fuction.webhook import send_webhook
-from fuction.card import create_personal_card
+from fuction.card import create_personal_card, create_rating_card
 
 bot = commands.Bot(command_prefix='#')
 
@@ -117,11 +117,25 @@ async def level(ctx):
     rank = user.get_rank()
     score = user.get_score()
     member = ctx.author
-    id = ctx.author.id
     image_av = member.avatar_url_as(format='png', size=256)
-    create_personal_card(image_av, rank, score, user.get_level(),ctx.author.name,)
+    create_personal_card(image_av, rank, score, user.get_level(), ctx.author.name, )
     await ctx.channel.send(file=discord.File('images/w.png'))
 
+
+@bot.command()
+async def rating(ctx):
+    user = Sql(ctx.author.id, get_connection(), ctx.author.name)
+    rank = user.get_rank()
+    user_list = user.get_ten_users()
+    user_list.append([user.author_name, ctx.author.id, user.get_rank()])
+    h = 0
+    for i in user_list:
+        user_list[h][1] = await bot.fetch_user(i[1])
+        user_list[h][1] = user_list[h][1].avatar_url_as(format='png', size=64)
+        h += 1
+    print(user_list)
+    create_rating_card(user_list)
+    await ctx.channel.send(file=discord.File('images/w.png'))
 
 @bot.event
 async def on_member_join(member):
