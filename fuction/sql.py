@@ -60,3 +60,14 @@ class Sql:
                 return rank
             rank += 1
         return None
+
+    def get_ten_users(self):
+        user_list = []
+        cursor = self.conn.cursor()
+        users = cursor.execute('SELECT name, id FROM users ORDER BY level DESC').fetchall()
+        h = 1
+        for i in users:
+            user_list.append([i[0], i[1], h])
+            h += 1
+        return user_list
+
