@@ -68,6 +68,8 @@ class Sql:
         h = 1
         for i in users:
             user_list.append([i[0], i[1], h])
+            if h == 6:
+                return user_list
             h += 1
-        return user_list
+
 
