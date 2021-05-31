@@ -112,13 +112,18 @@ async def on_message(message):
 
 
 @bot.command()
-async def level(ctx):
-    user = Sql(ctx.author.id, get_connection(), ctx.author.name)
+async def level(ctx, member: discord.Member = None):
+    if member is not None:
+        user = Sql(member.id, get_connection(), member.name)
+        name = member.name
+    else:
+        user = Sql(ctx.author.id, get_connection(), ctx.author.name)
+        member = ctx.author
+        name = ctx.author.name
     rank = user.get_rank()
     score = user.get_score()
-    member = ctx.author
     image_av = member.avatar_url_as(format='png', size=256)
-    create_personal_card(image_av, rank, score, user.get_level(), ctx.author.name, )
+    create_personal_card(image_av, rank, score, user.get_level(), name)
     await ctx.channel.send(file=discord.File('images/w.png'))
 
 
@@ -133,9 +138,9 @@ async def rating(ctx):
         user_list[h][1] = await bot.fetch_user(i[1])
         user_list[h][1] = user_list[h][1].avatar_url_as(format='png', size=64)
         h += 1
-    print(user_list)
     create_rating_card(user_list)
     await ctx.channel.send(file=discord.File('images/w.png'))
+
 
 @bot.event
 async def on_member_join(member):
