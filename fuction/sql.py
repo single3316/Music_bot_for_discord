@@ -29,7 +29,7 @@ class Sql:
         score = cursor.execute('SELECT score FROM users WHERE id = ?', (int(self.author),)).fetchone()[0]
         level = cursor.execute('SELECT level FROM users WHERE id = ?', (int(self.author),)).fetchone()[0]
         score += point
-        if score >= 1000:
+        if score >= 100:
             level += 1
             cursor.execute('UPDATE users SET score = 0, level = ? where id = ?', (level, int(self.author),))
         else:

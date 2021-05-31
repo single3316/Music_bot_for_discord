@@ -105,7 +105,7 @@ async def play(ctx, *, command=None):
 async def on_message(message):
     if message.author.id != '839621007614672896':
         user_sql = Sql(author_id=message.author.id, conn=get_connection(), name=message.author.name)
-        user_sql.add_point(len(message.content))
+        user_sql.add_point(len(message.content.split()))
         if message.author == '576307747566387223':
             await message.channel.send('Сева даун')
         await bot.process_commands(message)

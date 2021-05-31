@@ -17,7 +17,7 @@ def create_personal_card(url, rank, score, level, name):
     name_font = ImageFont.truetype('font/main.otf', size=50)
     draw_rank.text((340, 60), name, fill=('#00a8f0'), font=name_font)
     draw_rank.text((350, 160), f'Rating: {rank}', fill=('#00a8f0'), font=font)
-    draw_rank.text((350, 260), f'Score: {score}/1000', fill=('#00a8f0'), font=font)
+    draw_rank.text((350, 260), f'Score: {score}/100', fill=('#00a8f0'), font=font)
     draw_rank.text((350, 210), f'Level: {level}', fill=('#00a8f0'), font=font)
     im.save('images/w.png','png')
 
