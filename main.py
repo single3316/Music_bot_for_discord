@@ -163,4 +163,11 @@ async def diablo(ctx):
     webhook.delete()
 
 
+@bot.command()
+async def delete_web(ctx):
+    webhooks = await ctx.channel.webhooks()
+    for i in webhooks:
+        await i.delete()
+
+
 bot.run(TOKEN)
