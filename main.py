@@ -1,12 +1,13 @@
 import discord
 from discord.ext import commands
-from config import TOKEN, WEBHOOK_URL
+from config import *
 import youtube_dl
 import os
 from fuction.sql import Sql
 import sqlite3
 from fuction.webhook import send_webhook
 from fuction.card import create_personal_card, create_rating_card
+from fuction.diablo import *
 
 bot = commands.Bot(command_prefix='#')
 
@@ -148,6 +149,18 @@ async def on_member_join(member):
     send_webhook(f'Добро пожаловать {member.mention}',
                  'Рады вас приветствовать на нашем сервере для игр и IT индустрии',
                  WEBHOOK_URL)
+
+
+@bot.command()
+async def diablo(ctx):
+    message = ctx.message.content[8:].split()
+    category = message[0]
+    item = str(message[1])
+    data = parsing_item(item, get_category_name(category))
+    webhook: discord.Webhook = await ctx.channel.create_webhook(name='Diablo')
+    await webhook.send(avatar_url='https://www.rpgnuke.ru/wp-content/uploads/2019/10/476283675867580477693459876583645-e1572520886177.jpg',
+                       embed=data)
+    webhook.delete()
 
 
 bot.run(TOKEN)
