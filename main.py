@@ -160,7 +160,7 @@ async def diablo(ctx):
     webhook: discord.Webhook = await ctx.channel.create_webhook(name='Diablo')
     await webhook.send(avatar_url='https://www.rpgnuke.ru/wp-content/uploads/2019/10/476283675867580477693459876583645-e1572520886177.jpg',
                        embed=data)
-    webhook.delete()
+    await webhook.delete()
 
 
 @bot.command()
