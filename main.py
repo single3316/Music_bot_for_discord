@@ -153,14 +153,26 @@ async def on_member_join(member):
 
 @bot.command()
 async def diablo(ctx):
-    message = ctx.message.content[8:].split()
-    category = message[0]
-    item = str(message[1])
-    data = parsing_item(item, get_category_name(category))
-    webhook: discord.Webhook = await ctx.channel.create_webhook(name='Diablo')
-    await webhook.send(avatar_url='https://www.rpgnuke.ru/wp-content/uploads/2019/10/476283675867580477693459876583645-e1572520886177.jpg',
-                       embed=data)
-    await webhook.delete()
+    if ctx.message.content[8:] == '':
+        title = 'С помощью этой команды вы можете получить информацию о предметах из игры Diablo'
+        text = '**Команда может выглядеть следующим образом:**\n```#diablo шлем тени```\n\nДоступные категории:\n1. Шлем\n' \
+               '2. Плечи\n3. Корпус\n4. Запястья\n6. Кисти\n7. Пояс\n8. Ноги\n9. Боты\n10. Ювелирка\n11. Доп\n12. Спутник\n' \
+               '13. Оружие\n14. Зелья\n15. Прочее\n'
+        data = discord.Embed(colour=10038562, description=text, title=title)
+        webhook: discord.Webhook = await ctx.channel.create_webhook(name='Diablo')
+        await webhook.send(
+            avatar_url='https://www.rpgnuke.ru/wp-content/uploads/2019/10/476283675867580477693459876583645-e1572520886177.jpg',
+            embed=data)
+        await webhook.delete()
+    else:
+        message = ctx.message.content[8:].split()
+        category = message[0]
+        item = str(message[1])
+        data = parsing_item(item, get_category_name(category))
+        webhook: discord.Webhook = await ctx.channel.create_webhook(name='Diablo')
+        await webhook.send(avatar_url='https://www.rpgnuke.ru/wp-content/uploads/2019/10/476283675867580477693459876583645-e1572520886177.jpg',
+                           embed=data)
+        await webhook.delete()
 
 
 @bot.command()
