@@ -3,11 +3,11 @@ from discord.ext import commands
 from config import *
 import youtube_dl
 import os
-from fuction.sql import Sql
+from function.sql import Sql
 import sqlite3
-from fuction.webhook import send_webhook
-from fuction.card import create_personal_card, create_rating_card
-from fuction.diablo import *
+from function.webhook import send_webhook
+from function.card import create_personal_card, create_rating_card
+from function.diablo import *
 
 bot = commands.Bot(command_prefix='#')
 
@@ -173,6 +173,11 @@ async def diablo(ctx):
         await webhook.send(avatar_url='https://www.rpgnuke.ru/wp-content/uploads/2019/10/476283675867580477693459876583645-e1572520886177.jpg',
                            embed=data)
         await webhook.delete()
+
+
+@bot.command()
+async def diablo_build(ctx):
+    pass
 
 
 @bot.command()
