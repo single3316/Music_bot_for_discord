@@ -170,8 +170,9 @@ async def diablo(ctx):
         item = str(message[1])
         data = parsing_item(item, get_category_name(category))
         webhook: discord.Webhook = await ctx.channel.create_webhook(name='Diablo')
-        await webhook.send(avatar_url='https://www.rpgnuke.ru/wp-content/uploads/2019/10/476283675867580477693459876583645-e1572520886177.jpg',
-                           embed=data)
+        await webhook.send(
+            avatar_url='https://www.rpgnuke.ru/wp-content/uploads/2019/10/476283675867580477693459876583645-e1572520886177.jpg',
+            embed=data)
         await webhook.delete()
 
 
@@ -185,6 +186,36 @@ async def delete_web(ctx):
     webhooks = await ctx.channel.webhooks()
     for i in webhooks:
         await i.delete()
+
+
+@bot.event
+async def on_raw_reaction_add(payload):
+    message_id = payload.message_id
+    if message_id == config.POST_ROLE_ID:
+        if len(payload.member.roles) <= 20:
+            guild_id = payload.guild_id
+            guild = discord.utils.find(lambda g: g.id == guild_id, bot.guilds)
+            if payload.emoji.name == 'top':
+                role = discord.utils.get(guild.roles, name='Top')
+            elif payload.emoji.name == 'mid':
+                role = discord.utils.get(guild.roles, name='Mid')
+            elif payload.emoji.name == 'jungle':
+                role = discord.utils.get(guild.roles, name='Forest')
+            elif payload.emoji.name == 'sup':
+                role = discord.utils.get(guild.roles, name='Support')
+            elif payload.emoji.name == 'adc':
+                role = discord.utils.get(guild.roles, name='Carry')
+            else:
+                role = None
+            if role is not None:
+                user = payload.member
+                if user is not None:
+                    await user.add_roles(role)
+                    print('{0.name} have role {1.name}'.format(user, role))
+                else:
+                    print('Member not found')
+            else:
+                print('Role not found')
 
 
 bot.run(TOKEN)

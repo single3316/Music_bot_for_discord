@@ -1,3 +1,5 @@
 config.py
-db.sqlite
 ffmpeg.exe
+db.sqlite
+music
+font
