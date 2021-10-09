@@ -8,6 +8,7 @@ import sqlite3
 from function.webhook import send_webhook
 from function.card import create_personal_card, create_rating_card
 from function.diablo import *
+from discord import Intents
 
 bot = commands.Bot(command_prefix='#')
 
